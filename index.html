@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Energy Field Game - Mobile & Desktop</title>
+  <title>Energy Field Game - Optimized</title>
   <style>
     html, body {
       margin: 0;
@@ -27,7 +27,6 @@
       const canvas = document.getElementById("gameCanvas");
       const ctx = canvas.getContext("2d");
 
-      // Automatische Canvas-Größe anpassen
       function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -58,6 +57,9 @@
       let gameOverMessage = "";
       let points = 0;
       let gameStartTime = 0;
+
+      let dragging = false;
+      let touchOffset = { x: 0, y: 0 };
 
       function getNextSwitchDelay() {
         return (Math.random() < 0.4 ? 1000 + Math.random() * 2000 : 3000 + Math.random() * 5000);
@@ -239,13 +241,18 @@
           gameStarted = true;
           gameStartTime = performance.now();
           const pos = getCanvasPos(e);
-          playerPos.x = pos.x;
-          playerPos.y = pos.y;
+          touchOffset.x = pos.x - playerPos.x;
+          touchOffset.y = pos.y - playerPos.y;
+          dragging = true;
 
           function movePlayer(ev) {
             const pos = getCanvasPos(ev);
-            playerPos.x = pos.x;
-            playerPos.y = pos.y;
+            playerPos.x = pos.x - touchOffset.x;
+            playerPos.y = pos.y - touchOffset.y;
+
+            // Begrenzung auf Bildschirmrand
+            playerPos.x = Math.max(BALL_RADIUS, Math.min(WIDTH - BALL_RADIUS, playerPos.x));
+            playerPos.y = Math.max(BALL_RADIUS, Math.min(HEIGHT - BALL_RADIUS, playerPos.y));
           }
 
           canvas.addEventListener('mousemove', movePlayer);
