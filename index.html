@@ -224,7 +224,7 @@
       ctx.font = '32px sans-serif';
       ctx.fillText(gameOverMessage, WIDTH / 2, HEIGHT / 2);
       ctx.font = '20px sans-serif';
-      ctx.fillText("Press 'R' to Restart", WIDTH / 2, HEIGHT / 2 + 40);
+      ctx.fillText("Tap or Press 'R' to Restart", WIDTH / 2, HEIGHT / 2 + 40);
     }
 
     requestAnimationFrame(gameLoop);
@@ -268,12 +268,10 @@
       playerPos.x = pos.x - touchOffset.x;
       playerPos.y = pos.y - touchOffset.y;
     } else if (!e.touches) {
-      // PC: direkte Steuerung durch Mauszeiger
       playerPos.x = pos.x;
       playerPos.y = pos.y;
     }
 
-    // Randbegrenzung
     playerPos.x = Math.max(BALL_RADIUS, Math.min(WIDTH - BALL_RADIUS, playerPos.x));
     playerPos.y = Math.max(BALL_RADIUS, Math.min(HEIGHT - BALL_RADIUS, playerPos.y));
   }
@@ -288,6 +286,18 @@
   canvas.addEventListener('touchmove', movePlayer);
   canvas.addEventListener('mouseup', endDrag);
   canvas.addEventListener('touchend', endDrag);
+
+// Restart on click/touch if game is over
+  canvas.addEventListener('click', (e) => {
+    if (gameOver) {
+      resetGame();
+    }
+  });
+  canvas.addEventListener('touchstart', (e) => {
+    if (gameOver) {
+      resetGame();
+    }
+  });
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'r' && gameOver) {
